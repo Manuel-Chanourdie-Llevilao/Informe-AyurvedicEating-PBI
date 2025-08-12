@@ -1,0 +1,180 @@
+table DetallesOrden
+	lineageTag: 61ca6d5b-2115-4893-8e69-e6579536fada
+
+	measure '00. Ingreso Total' = SUM(DetallesOrden[ListaProductos.Precio])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 2b5eda45-9012-475f-b58c-60b4316583af
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure '01.Total Orden' = DISTINCTCOUNT(DetallesOrden[Número de Orden])
+		formatString: 0
+		lineageTag: 2ae97283-ded2-48a4-83f7-1e75affb2767
+
+	measure '02. Promedio $ Orden' = DIVIDE([00. Ingreso Total],[01.Total Orden])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 1911b2af-eff8-4a70-afba-345ab5559253
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure '04. Ventas Mes Pasado' = CALCULATE([00. Ingreso Total],DATEADD(DetallesOrden[EncabezadoOrden.Fecha],-1,MONTH) )
+		formatString: #,0.###############\ "€";-#,0.###############\ "€";#,0.###############\ "€"
+		lineageTag: 17fb4949-c425-4693-99d4-0f3ccd0c6c8a
+
+		annotation PBI_FormatHint = {"currencyCulture":"es-ES"}
+
+	measure '05. Diferencia $ Mes Pasado' = [00. Ingreso Total]-[04. Ventas Mes Pasado]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 755f8bcd-989f-4270-8cec-33b6db7fa138
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure '06. Diferencia % Mes Pasado' = ```
+			DIVIDE([05. Diferencia $ Mes Pasado],[00. Ingreso Total],0) 
+			```
+		lineageTag: b6348c1e-504e-4ca5-8c59-d3bdba9dbf0b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '07. Cantidad Producto' = COUNT(DetallesOrden[Número de Orden])
+		formatString: 0
+		lineageTag: a047fe37-de33-4539-835e-3269d19e2d8d
+
+	measure '03. Promedio %' = SUM('Analisis de Orden'[Porcentaje %])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: c5e54ce7-ee33-4ac9-b97d-cfc25d99bf1f
+
+	measure '08. Promedio Producto por Orden' = AVERAGEX('Analisis de Orden','Analisis de Orden'[Cuenta Producto])
+		lineageTag: bc505f0c-fe91-42ba-829b-4a4b2a44e2d5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '09. Ordenes con Ambos Productos' = CALCULATE(DetallesOrden[01.Total Orden],CALCULATETABLE('Analisis de Orden',ALL(ListaProductos),USERELATIONSHIP(DetallesOrden[Nombre del Producto],ListaProductosFiltro[Número de Producto])))
+		formatString: 0
+		lineageTag: 9d7cff78-a9c8-4924-9aaa-8a4de75f8ea6
+
+	measure '10. Ordenes Totales Relacionada LPF' = CALCULATE([01.Total Orden],USERELATIONSHIP(DetallesOrden[Nombre del Producto],ListaProductosFiltro[Número de Producto]))
+		formatString: 0
+		lineageTag: 2bdd913f-1ad9-48ea-9e5d-13d16079315d
+
+	measure '11. Ingreso Total de Ambos Productos' = CALCULATE([00. Ingreso Total],CALCULATETABLE('Analisis de Orden',ALL(ListaProductos),USERELATIONSHIP(DetallesOrden[Nombre del Producto],ListaProductosFiltro[Número de Producto])))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: dd465499-3f7a-4215-bcad-7be3db5cf83d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Número de Orden'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c51dfef-4edb-4d0e-a703-9dedc0dc84ac
+		summarizeBy: none
+		sourceColumn: Número de Orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre del Producto'
+		dataType: string
+		lineageTag: e348d56b-202a-49f6-b708-730f56cde5f0
+		summarizeBy: none
+		sourceColumn: Nombre del Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ListaProductos.Proveedor'
+		dataType: string
+		lineageTag: 1cffcf0a-6edd-4844-993c-b7247dae045d
+		summarizeBy: none
+		sourceColumn: ListaProductos.Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ListaProductos.Categoría'
+		dataType: string
+		lineageTag: 153ee539-a8b4-43bb-a40e-d562d2bf2387
+		summarizeBy: none
+		sourceColumn: ListaProductos.Categoría
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: a6a7acb8-21ab-4b43-b393-c22b8a057e74
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ListaProductos.Precio'
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: b1f1cd07-297a-4525-9025-03beae67f56e
+		summarizeBy: sum
+		sourceColumn: ListaProductos.Precio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'EncabezadoOrden.Fecha'
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 041b2aa2-9a76-47f3-ba28-5d60f9473847
+		summarizeBy: none
+		sourceColumn: EncabezadoOrden.Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'EncabezadoOrden.Destino'
+		dataType: string
+		lineageTag: d098db42-50b8-47bf-85b9-ae84d16726c5
+		summarizeBy: none
+		sourceColumn: EncabezadoOrden.Destino
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'EncabezadoOrden.Método de Adquisición'
+		dataType: string
+		lineageTag: 693bab50-a50e-4218-b003-9f34e92726a8
+		summarizeBy: none
+		sourceColumn: EncabezadoOrden.Método de Adquisición
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'EncabezadoOrden.Contenedor Usado'
+		dataType: string
+		lineageTag: 209ce67e-fc4c-4ef1-bba4-9eff57a87b5f
+		summarizeBy: none
+		sourceColumn: EncabezadoOrden.Contenedor Usado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Porcentaje %' = DIVIDE(DetallesOrden[ListaProductos.Precio],SUM(DetallesOrden[ListaProductos.Precio]))
+		formatString: #,0.00\ %;-#,0.00\ %;#,0.00\ %
+		lineageTag: a53f6183-be77-402b-b2ac-3a77fc34c40c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DetallesOrden = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    DetallesOrden_Table = Origen{[Item="DetallesOrden",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(DetallesOrden_Table,{{"Número de Orden", Int64.Type}, {"Nombre del Producto", type text}}),
+				    #"Consultas combinadas" = Table.NestedJoin(#"Tipo cambiado", {"Nombre del Producto"}, ListaProductos, {"Número de Producto"}, "ListaProductos", JoinKind.LeftOuter),
+				    #"Se expandió ListaProductos" = Table.ExpandTableColumn(#"Consultas combinadas", "ListaProductos", {"Proveedor", "Categoría", "Producto", "Precio"}, {"ListaProductos.Proveedor", "ListaProductos.Categoría", "ListaProductos.Producto", "ListaProductos.Precio"}),
+				    #"Tipo cambiado1" = Table.TransformColumnTypes(#"Se expandió ListaProductos",{{"ListaProductos.Precio", Currency.Type}}),
+				    #"Filas ordenadas" = Table.Sort(#"Tipo cambiado1",{{"Número de Orden", Order.Ascending}}),
+				    #"Consultas combinadas1" = Table.NestedJoin(#"Filas ordenadas", {"Número de Orden"}, EncabezadoOrden, {"Número de Ord"}, "EncabezadoOrden", JoinKind.LeftOuter),
+				    #"Se expandió EncabezadoOrden" = Table.ExpandTableColumn(#"Consultas combinadas1", "EncabezadoOrden", {"Fecha", "Destino", "Método de Adquisición", "Contenedor Usado"}, {"EncabezadoOrden.Fecha", "EncabezadoOrden.Destino", "EncabezadoOrden.Método de Adquisición", "EncabezadoOrden.Contenedor Usado"}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Se expandió EncabezadoOrden",{{"ListaProductos.Producto", "Producto"}})
+				in
+				    #"Columnas con nombre cambiado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

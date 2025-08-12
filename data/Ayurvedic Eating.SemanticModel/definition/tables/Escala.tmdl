@@ -1,0 +1,31 @@
+table Escala
+	isHidden
+	lineageTag: 2d738cb6-245f-41d7-be28-0baf6e1e7666
+
+	column Escala
+		dataType: string
+		isHidden
+		lineageTag: e3434c36-6160-47d5-8c59-d1688c7846d6
+		summarizeBy: none
+		sourceColumn: Escala
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Escala = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    Escala_Table = Origen{[Item="Escala",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Escala_Table,{{"Escala", type text}})
+				in
+				    #"Tipo cambiado"
+
+	changedProperty = Name
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

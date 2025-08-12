@@ -1,0 +1,84 @@
+table EncabezadoOrden
+	isHidden
+	lineageTag: 73dcbc75-8de6-427f-849e-166d074f9f1d
+
+	column 'Número de Ord'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2c5f6b44-3870-444d-8b77-82375119d615
+		summarizeBy: sum
+		sourceColumn: Número de Ord
+
+		changedProperty = SortByColumn
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 9cc1c0c2-a191-441f-b9e9-855dcd32f529
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		variation Variación
+			isDefault
+			relationship: 1efa1b3c-52fe-4efc-abfd-f945e1ef10c3
+			defaultHierarchy: LocalDateTable_da861ac3-9c3a-4c67-97f6-091722c03c9a.'Jerarquía de fechas'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Destino
+		dataType: string
+		isHidden
+		lineageTag: bb8e41c1-5df6-493c-8a22-560458c0c600
+		summarizeBy: none
+		sourceColumn: Destino
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Método de Adquisición'
+		dataType: string
+		isHidden
+		lineageTag: 698a2a90-2251-4209-964d-3ac70f5543c1
+		summarizeBy: none
+		sourceColumn: Método de Adquisición
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contenedor Usado'
+		dataType: string
+		isHidden
+		lineageTag: 33183e9b-05cd-413c-b582-da687cf24dab
+		summarizeBy: none
+		sourceColumn: Contenedor Usado
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EncabezadoOrden = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    EncabezadoOrden_Table = Origen{[Item="EncabezadoOrden",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(EncabezadoOrden_Table,{{"Número de Ord", Int64.Type}, {"Fecha", type date}, {"Destino", type text}, {"Método de Adquisición", type text}, {"Contenedor Usado", type text}})
+				in
+				    #"Tipo cambiado"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

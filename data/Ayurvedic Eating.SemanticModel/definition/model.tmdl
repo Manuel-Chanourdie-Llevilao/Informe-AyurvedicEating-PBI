@@ -1,0 +1,30 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-ES
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DetallesOrden","EncabezadoOrden","Escala","ListaProductos","ListaProductosFiltro","Calendario"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1602.0 (25.07)+10647c9fa319b5e39936cdb21328038c371d1fe4
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table DetallesOrden
+ref table EncabezadoOrden
+ref table DateTableTemplate_a1b3e6fa-cfed-48fa-a450-4ecc8f696634
+ref table Escala
+ref table ListaProductos
+ref table ListaProductosFiltro
+ref table Calendario
+ref table LocalDateTable_cff9a82b-fc88-47b8-aa81-57d194242f44
+ref table LocalDateTable_3d9a0374-2792-45bf-aac9-f03fb136d5a2
+ref table 'Analisis de Orden'
+ref table LocalDateTable_da861ac3-9c3a-4c67-97f6-091722c03c9a
+
+ref cultureInfo es-ES
+

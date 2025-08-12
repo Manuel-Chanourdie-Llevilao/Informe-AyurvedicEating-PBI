@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Ayurvedic Eating"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c0c95170-f013-4171-b700-0f5f4220f18c"
+  }
+}

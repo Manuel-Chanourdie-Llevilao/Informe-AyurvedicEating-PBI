@@ -1,0 +1,45 @@
+table 'Analisis de Orden'
+	lineageTag: 0295bda7-929d-4d2f-ac57-3f29ab7e4fdf
+
+	column 'Número de Orden'
+		formatString: 0
+		lineageTag: aeaf8e09-4257-4908-b707-6ca373fac5bd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: DetallesOrden[Número de Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cuenta Producto'
+		formatString: 0
+		lineageTag: 6bc58ae0-3c23-4d35-b092-a4d86e2683fe
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Cuenta Producto]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ventas Totales'
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 641a9de2-1f8b-4012-8733-dcb6c54e7c7b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ventas Totales]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Porcentaje %' = DIVIDE('Analisis de Orden'[Ventas Totales],SUM('Analisis de Orden'[Ventas Totales]))
+		formatString: #,0.00\ %;-#,0.00\ %;#,0.00\ %
+		lineageTag: 5f6db310-66f8-4932-be05-268bcb0cca29
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Analisis de Orden' = calculated
+		mode: import
+		source = SUMMARIZE(DetallesOrden,DetallesOrden[Número de Orden],"Cuenta Producto",COUNT(DetallesOrden[Número de Orden]),"Ventas Totales",SUM(DetallesOrden[ListaProductos.Precio]))
+
+	annotation PBI_Id = f03b4db7027d4f8f961f739a7591c1b3
+

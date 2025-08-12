@@ -1,0 +1,95 @@
+table ListaProductos
+	lineageTag: 61160a01-d892-4e23-8e43-02ae97875b33
+
+	measure '00. Ventas Totales' = SUM(ListaProductos[Ventas Totales Producto])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a329ccac-c64c-49aa-9e79-861752985909
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Número de Producto'
+		dataType: string
+		lineageTag: 2866602c-754e-4055-aa90-e11d081b1062
+		summarizeBy: none
+		sourceColumn: Número de Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Proveedor
+		dataType: string
+		lineageTag: 040018cf-e714-4596-8df9-449ada522e51
+		summarizeBy: none
+		sourceColumn: Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoría
+		dataType: string
+		lineageTag: 8abffbc0-78a9-4af7-8c1d-2e120f0de30d
+		summarizeBy: none
+		sourceColumn: Categoría
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: 979f650c-d87b-4e72-a23c-a2429eee4dcf
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precio
+		dataType: double
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 50d7c6cc-2885-44a4-9f7a-fcb0a5a35585
+		summarizeBy: none
+		sourceColumn: Precio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Ventas Totales Producto' = CALCULATE(SUM(DetallesOrden[ListaProductos.Precio]))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 587bcd0a-3ee6-49d3-8983-0fad6a5b6901
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Ventas Acumuladas' = CALCULATE(SUM(ListaProductos[Ventas Totales Producto]),ALL(ListaProductos),ListaProductos[Ventas Totales Producto]>=EARLIER(ListaProductos[Ventas Totales Producto]))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 2a630ae1-a2ad-40e2-a9ce-7073dc5615ed
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Porcentaje Acumulado' = ListaProductos[Ventas Acumuladas]/SUM(ListaProductos[Ventas Totales Producto])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 83db8e0b-ec4b-4c16-a8bd-31bd4cc4c713
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Clasificación ABC' = SWITCH(TRUE(),ListaProductos[Porcentaje Acumulado]<=0.7,"A",ListaProductos[Porcentaje Acumulado]<=0.9,"B",ListaProductos[Porcentaje Acumulado]>0.9,"C")
+		lineageTag: c6a6a936-f667-4d52-8795-74e4c7c13408
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ListaProductos = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    ListaProductos_Table = Origen{[Item="ListaProductos",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(ListaProductos_Table,{{"Número de Producto", type text}, {"Proveedor", type text}, {"Categoría", type text}, {"Producto", type text}, {"Precio", type number}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+

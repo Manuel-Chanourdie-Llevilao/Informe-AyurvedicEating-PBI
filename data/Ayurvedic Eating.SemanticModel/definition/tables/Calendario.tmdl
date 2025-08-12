@@ -1,0 +1,90 @@
+table Calendario
+	lineageTag: 2070ae26-8fe0-4c5e-81c4-5bd422bf89fc
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f9b65ce2-e39c-4530-abe3-a5e0ff700998
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variación
+			isDefault
+			relationship: 4d84f82e-fcc2-40d9-bdc0-1f7e0157a291
+			defaultHierarchy: LocalDateTable_cff9a82b-fc88-47b8-aa81-57d194242f44.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año
+		dataType: int64
+		formatString: 0
+		lineageTag: 448f62cb-d0a4-432c-a996-d1b1635790cd
+		summarizeBy: sum
+		sourceColumn: Año
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Número de mes'
+		dataType: int64
+		formatString: 0
+		lineageTag: 861a633c-ff67-4c8c-8f80-181aa55a536e
+		summarizeBy: sum
+		sourceColumn: Número de mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: string
+		lineageTag: 81eddcb7-9a60-4c1c-9bf2-34ea9bfef4f3
+		summarizeBy: none
+		sourceColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column MMM-AAAA
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4e75267d-3582-42fb-9976-1df91baa10c4
+		summarizeBy: none
+		sourceColumn: MMM-AAAA
+
+		variation Variación
+			isDefault
+			relationship: 30a39699-f0f9-4fd6-b610-63e4f75ca758
+			defaultHierarchy: LocalDateTable_3d9a0374-2792-45bf-aac9-f03fb136d5a2.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Número de día de la semana'
+		dataType: int64
+		formatString: 0
+		lineageTag: 76647570-a3c6-4a20-8654-703e767c5660
+		summarizeBy: sum
+		sourceColumn: Número de día de la semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día de la semana'
+		dataType: string
+		lineageTag: e0386bad-b39f-4402-8e9b-4e85e2311362
+		summarizeBy: none
+		sourceColumn: Día de la semana
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendario = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    Calendario_Table = Origen{[Item="Calendario",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Calendario_Table,{{"Date", type datetime}, {"Año", Int64.Type}, {"Número de mes", Int64.Type}, {"Mes", type text}, {"MMM-AAAA", type date}, {"Número de día de la semana", Int64.Type}, {"Día de la semana", type text}})
+				in
+				    #"Tipo cambiado"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

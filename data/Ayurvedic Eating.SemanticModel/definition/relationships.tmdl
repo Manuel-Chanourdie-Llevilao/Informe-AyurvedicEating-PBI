@@ -1,0 +1,33 @@
+relationship 1c87d9ee-f08f-f53c-df41-805817dc846c
+	fromColumn: DetallesOrden.'Nombre del Producto'
+	toColumn: ListaProductos.'Número de Producto'
+
+relationship bef4749a-fa86-f0d1-0dca-a05f6eb181fe
+	isActive: false
+	fromColumn: DetallesOrden.'Nombre del Producto'
+	toColumn: ListaProductosFiltro.'Número de Producto'
+
+relationship 4d84f82e-fcc2-40d9-bdc0-1f7e0157a291
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendario.Date
+	toColumn: LocalDateTable_cff9a82b-fc88-47b8-aa81-57d194242f44.Date
+
+relationship 30a39699-f0f9-4fd6-b610-63e4f75ca758
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendario.MMM-AAAA
+	toColumn: LocalDateTable_3d9a0374-2792-45bf-aac9-f03fb136d5a2.Date
+
+relationship 787bddc2-4922-7116-162f-3950736c9ee3
+	crossFilteringBehavior: bothDirections
+	fromColumn: DetallesOrden.'Número de Orden'
+	toColumn: 'Analisis de Orden'.'Número de Orden'
+
+relationship 1efa1b3c-52fe-4efc-abfd-f945e1ef10c3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: EncabezadoOrden.Fecha
+	toColumn: LocalDateTable_da861ac3-9c3a-4c67-97f6-091722c03c9a.Date
+
+relationship 3f90efd2-74d2-c69c-9d6c-ea63411d7d8b
+	fromColumn: DetallesOrden.'EncabezadoOrden.Fecha'
+	toColumn: Calendario.Date
+

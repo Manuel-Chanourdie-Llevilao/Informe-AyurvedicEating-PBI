@@ -1,0 +1,57 @@
+table ListaProductosFiltro
+	lineageTag: 07e2f930-7d7d-49e7-86ea-c8f713271057
+
+	column 'Número de Producto'
+		dataType: string
+		lineageTag: f0dbc7fb-f9b5-4bcb-b0c1-6e4f15e16b90
+		summarizeBy: none
+		sourceColumn: Número de Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Proveedor
+		dataType: string
+		lineageTag: 4da67808-7aa9-477c-99a3-51e27d491ab7
+		summarizeBy: none
+		sourceColumn: Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoría
+		dataType: string
+		lineageTag: 63f71b44-5e37-411f-bfba-a4d60241917a
+		summarizeBy: none
+		sourceColumn: Categoría
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: 59f7440f-30c9-45c4-b03c-1bddd48d7310
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precio
+		dataType: double
+		lineageTag: 232d0757-a1aa-447b-a76c-72a590728484
+		summarizeBy: sum
+		sourceColumn: Precio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ListaProductosFiltro = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\chanu\OneDrive\A2 Curso - SQL\OPWER BI - PIVOT\Ventas y Órdenes.xlsx"), null, true),
+				    ListaProductosFiltro_Table = Origen{[Item="ListaProductosFiltro",Kind="Table"]}[Data],
+				    #"Tipo cambiado" = Table.TransformColumnTypes(ListaProductosFiltro_Table,{{"Número de Producto", type text}, {"Proveedor", type text}, {"Categoría", type text}, {"Producto", type text}, {"Precio", type number}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+
